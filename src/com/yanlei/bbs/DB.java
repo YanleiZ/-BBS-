@@ -1,10 +1,8 @@
 package com.yanlei.bbs;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+
+import com.mysql.jdbc.PreparedStatement;
 
 public class DB {
 	public static Connection getConn() {
@@ -40,6 +38,16 @@ public class DB {
 		}
 		return rs;
 
+	}
+
+	public static PreparedStatement preparedStmt(Connection conn, String sql) {
+		PreparedStatement pstmt = null;
+		try {
+			pstmt = (PreparedStatement) conn.prepareStatement(sql);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return pstmt;
 	}
 
 	public static void close(Connection conn) {
