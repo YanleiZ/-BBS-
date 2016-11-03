@@ -7,6 +7,7 @@
 	if (strId == null || strId.trim().equals("")) {//两个条件不能反过来，否则空指针错误，|也不行(因为trim方法)
 		out.println("Error ID!");
 		return;
+		
 	}
 	int id = 0;
 	try {
