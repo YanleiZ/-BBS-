@@ -7,6 +7,7 @@
 	if (action != null && action.trim().equals("post")) {
 		String title = request.getParameter("title");
 		String cont = request.getParameter("cont");
+		cont = cont.substring(3, cont.length() - 6);
 		Connection conn = DB.getConn();
 		boolean autoCommit = conn.getAutoCommit();
 		conn.setAutoCommit(false);
