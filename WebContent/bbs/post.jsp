@@ -1,15 +1,41 @@
+<%@page import="com.yanlei.bbs.DB"%>
 <%@ page pageEncoding="utf-8"%>
 <%@ page import="java.sql.*"%>
 <%
-	int id = Integer.parseInt(request.getParameter("id"));
-	int rootId = Integer.parseInt(request.getParameter("rootId"));
-	String title = request.getParameter("title");
+	request.setCharacterEncoding("utf-8");
+	String action = request.getParameter("action");
+	if (action != null && action.trim().equals("post")) {
+		String title = request.getParameter("title");
+		String cont = request.getParameter("cont");
+		Connection conn = DB.getConn();
+		boolean autoCommit = conn.getAutoCommit();
+		conn.setAutoCommit(false);
+		int rootId = -1;
+		String sql = "insert into article values (null,?,?,?,?,now(),?)";
+		PreparedStatement pstmt = DB.preparedStmt(conn, sql, Statement.RETURN_GENERATED_KEYS);//最后一个参数的指定是为了能拿到自动生成的一个key，用于作为文章的id
+		pstmt.setInt(1, 0);
+		pstmt.setInt(2, rootId);
+		pstmt.setString(3, title);
+		pstmt.setString(4, cont);
+		pstmt.setInt(5, 0);
+		pstmt.executeUpdate();
+		ResultSet rsKey = pstmt.getGeneratedKeys();
+		rsKey.next();
+		rootId = rsKey.getInt(1);
+		Statement stmt = DB.createStmt(conn);
+		stmt.executeUpdate("update article set rootid = " + rootId + " where id = " + rootId);
+		conn.commit();
+		conn.setAutoCommit(autoCommit);
+		DB.close(stmt);
+		DB.close(pstmt);
+		DB.close(conn);
+		response.sendRedirect("article.jsp");
+	}
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 <head>
-<title>Java|Java世界_中文论坛|ChinaJavaWorld技术论坛 :
-	初学java遇一难题！！望大家能帮忙一下 ...</title>
+<title>发表新帖~</title>
 <meta http-equiv="content-type" content="text/html; charset=GBK">
 <link rel="stylesheet" type="text/css" href="images/style.css"
 	title="Integrated Styles">
@@ -50,9 +76,7 @@
 								2 Platform, Standard Edition (J2SE)</a> &#187; <a
 								href="http://bbs.chinajavaworld.com/forum.jspa?forumID=20&amp;start=0">Java语言*初级版</a>
 						</p>
-						<p class="jive-page-title">
-							主题:
-							<%=title%></p></td>
+						<p class="jive-page-title">发新帖</p></td>
 					<td width="1%"><div class="jive-accountbox"></div></td>
 				</tr>
 			</tbody>
@@ -68,9 +92,8 @@
 								<div class="jive-table">
 									<div class="jive-messagebox">
 
-										<form action="replyDeal.jsp" method="post">
-											<input type="hidden" name="pid" value="<%=id%>" /> <input
-												type="hidden" name="rootId" value="<%=rootId%>" /> 标题：<input
+										<form action="post.jsp" method="post">
+											<input type="hidden" name="action" value="post"> 标题：<input
 												type="text" name="title"><br> 内容：
 											<textarea name="cont" rows="15" cols="80"></textarea>
 											<!--替换textarea要在要替换的textarea后边写-->
