@@ -15,8 +15,14 @@
 <script language="JavaScript" type="text/javascript"
 	src="images/global.js"></script>
 
-<link rel="alternate" type="application/rss+xml" title="RSS"
-	href="http://bbs.chinajavaworld.com/rss/rssmessages.jspa?threadID=744236">
+<link rel="stylesheet" type="text/css" href="images/style.css"
+	title="Integrated Styles">
+<script language="JavaScript" type="text/javascript"
+	src="images/global.js"></script>
+<!-- fckeditor -->
+<script type="text/javascript" src="../ckeditor/ckeditor.js"></script>
+<!-- end of fckeditor -->
+
 </head>
 <body>
 	<table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -48,20 +54,7 @@
 				</tr>
 			</tbody>
 		</table>
-		<div class="jive-buttons">
-			<table summary="Buttons" border="0" cellpadding="0" cellspacing="0">
-				<tbody>
-					<tr>
-						<td class="jive-icon"><a
-							href="http://bbs.chinajavaworld.com/post%21reply.jspa?threadID=744236"><img
-								src="images/reply-16x16.gif" alt="回复本主题" border="0" height="16"
-								width="16"></a></td>
-						<td class="jive-icon-label"><a id="jive-reply-thread"
-							href="reply.jsp">回复本主题</a></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+
 		<br>
 		<table border="0" cellpadding="0" cellspacing="0" width="930"
 			height="61">
@@ -77,7 +70,11 @@
 												type="hidden" name="rootId" value="<%=rootId%>" /> 标题：<input
 												type="text" name="title"><br> 内容：
 											<textarea name="cont" rows="15" cols="80"></textarea>
-											<br> <input type="submit" value="submit" />
+											<--替换textarea要在要替换的textarea后边写-->
+											<script type="text/javascript">
+												CKEDITOR.replace('cont');
+											</script>
+											<br> <br> <input type="submit" value="确认回复" />
 										</form>
 
 									</div>
