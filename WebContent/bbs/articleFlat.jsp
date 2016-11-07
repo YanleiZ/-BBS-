@@ -6,6 +6,14 @@
 <%@page pageEncoding="utf-8"%>
 
 <%
+	boolean logined = false;
+	String adminLogined = (String) session.getAttribute("adminLogined");
+	if (adminLogined != null && adminLogined.trim().equals("true")) {
+		logined = true;
+	}
+%>
+
+<%
 	final int PAGE_SIZE = 4;
 	int pageNo = 1;
 	String strPageNo = request.getParameter("pageNo");
@@ -154,15 +162,22 @@
 															+ request.getContextPath() + request.getServletPath();
 													System.out.println(url);
 													System.out.println(request.getQueryString());
-													
-													url += request.getQueryString()==null ?"":"?"+request.getQueryString();
+
+													url += request.getQueryString() == null ? "" : "?" + request.getQueryString();
 
 													System.out.println(url);
 													System.out.println(request.getRequestURL());
 													System.out.println(request.getRequestURI());
 											%>
-											<td nowrap="nowrap" width="1%"><a
-												href="delete.jsp?isLeaf=<%=a.isLeaf()%>&id=<%=a.getId()%>&pid=<%=a.getPid()%>&from=<%=url%>">删除</a></td>
+											<td nowrap="nowrap" width="1%">
+												<%
+													if (logined) {
+												%> <a href="modify.jsp?id=<%=a.getId()%>">修改</a> <a
+												href="delete.jsp?isLeaf=<%=a.isLeaf()%>&id=<%=a.getId()%>&pid=<%=a.getPid()%>&from=<%=url%>">删除</a>
+												<%
+													}
+												%>
+											</td>
 											<td class="jive-thread-name" width="95%"><a
 												id="jive-thread-1"
 												href="articleDetailFlat.jsp?id=<%=a.getId()%>"><%=a.getTitle()%></a></td>

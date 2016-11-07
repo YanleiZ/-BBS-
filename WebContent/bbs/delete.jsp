@@ -4,6 +4,7 @@
 <%@page import="com.yanlei.bbs.DB"%>
 <%@page import="java.io.Writer"%>
 <%@page pageEncoding="utf-8"%>
+<%@ include file="_sessioncheck.jsp" %>
 <%!private void delete(int id, Connection conn, boolean isLeaf) {
 		if (!isLeaf) {
 			String sql = "select * from article where pid = " + id;
@@ -44,7 +45,7 @@
 		rs.next();
 		int count = rs.getInt(1);
 		if (count <= 0) {
-	DB.executeUpdate(conn, "update article set isleaf = 0 where id = " + pid);
+			DB.executeUpdate(conn, "update article set isleaf = 0 where id = " + pid);
 		}
 		conn.commit();
 	} finally {
