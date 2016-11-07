@@ -6,14 +6,37 @@
 <%@page pageEncoding="utf-8"%>
 
 <%
-	List<Article> article = new ArrayList<Article>();
+	final int PAGE_SIZE = 4;
+	int pageNo = 1;
+	String strPageNo = request.getParameter("pageNo");
+	if (strPageNo != null && !strPageNo.trim().equals("")) {
+		try {
+			pageNo = Integer.parseInt(strPageNo);
+		} catch (NumberFormatException e) {
+			pageNo = 1;
+		}
+	}
+	if (pageNo <= 0)
+		pageNo = 1;
+	int totalPages = 0;
+
+	List<Article> articles = new ArrayList<Article>();
 	Connection conn = DB.getConn();
-	Statement stmt = DB.createStmt(conn);
-	ResultSet rs = DB.executeQuery(stmt, "select * from article where pid = 0");
+	Statement stmtCount = DB.createStmt(conn);
+	ResultSet rsCount = DB.executeQuery(stmtCount, "select count(*) from article where pid = 0");
+	rsCount.next();
+	int totalRecords = rsCount.getInt(1);
+	totalPages = (totalRecords + PAGE_SIZE - 1) / PAGE_SIZE;
+	if (pageNo > totalPages) {
+		pageNo = totalPages;
+	}
+Statement stmt =DB.createStmt(conn);
+int startPos = (pageNo-1)*PAGE_SIZE;
+	ResultSet rs = DB.executeQuery(stmt, "select * from article where pid = 0 order by pdate desc limit "+startPos+","+PAGE_SIZE);
 	while (rs.next()) {
 		Article a = new Article();
 		a.initFromRs(rs);
-		article.add(a);
+		articles.add(a);
 	}
 	DB.close(conn);
 %>
@@ -77,23 +100,15 @@
 			<tbody>
 
 				<tr valign="top">
-					<td><span class="nobreak"> 页: 1,316 - <span
-							class="jive-paginator"> [ <a
-								href="http://bbs.chinajavaworld.com/forum.jspa?forumID=20&amp;start=0&amp;isBest=0">上一页</a>
-								| <a
-								href="http://bbs.chinajavaworld.com/forum.jspa?forumID=20&amp;start=0&amp;isBest=0"
-								class="">1</a> <a
-								href="http://bbs.chinajavaworld.com/forum.jspa?forumID=20&amp;start=25&amp;isBest=0"
-								class="jive-current">2</a> <a
-								href="http://bbs.chinajavaworld.com/forum.jspa?forumID=20&amp;start=50&amp;isBest=0"
-								class="">3</a> <a
-								href="http://bbs.chinajavaworld.com/forum.jspa?forumID=20&amp;start=75&amp;isBest=0"
-								class="">4</a> <a
-								href="http://bbs.chinajavaworld.com/forum.jspa?forumID=20&amp;start=100&amp;isBest=0"
-								class="">5</a> <a
-								href="http://bbs.chinajavaworld.com/forum.jspa?forumID=20&amp;start=125&amp;isBest=0"
-								class="">6</a> | <a
-								href="http://bbs.chinajavaworld.com/forum.jspa?forumID=20&amp;start=50&amp;isBest=0">下一页</a>
+					<td><span class="nobreak"> 页: 第<%=pageNo %>页，共<%=totalPages %>页
+							<span class="jive-paginator"> [ <a
+								href="articleFlat.jsp?pageNo=<%=pageNo-1%>">上一页</a> | <a
+								<% for(int i =1;i<=totalPages;i++){%>
+								href="articleFlat.jsp?pageNo=<%=i%>"
+								class=""><%=i%></a> <a
+								
+								<%} %>
+								href="articleFlat.jsp?pageNo=<%=pageNo+1%>">下一页</a>
 								]
 						</span>
 					</span></td>
@@ -120,15 +135,17 @@
 									</thead>
 									<tbody>
 										<%
-											int s = 0;
-											for (Iterator<Article> iterator = article.iterator(); iterator.hasNext();) {
+										
+																						
+											int lineNo = 0;
+											for (Iterator<Article> iterator = articles.iterator(); iterator.hasNext();) {
 												Article a = iterator.next();
-												s++;
+												lineNo++;
 												String preStr = "";
 												for (int i = 0; i < a.getGrade(); i++) {
 													preStr += "----";
 												}
-												String classStr = s % 2 == 0 ? "jive-even" : "jive-odd";
+												String classStr = lineNo % 2 == 0 ? "jive-even" : "jive-odd";
 										%>
 										<tr class="<%=classStr%>">
 											<td class="jive-first" nowrap="nowrap" width="1%"><div
