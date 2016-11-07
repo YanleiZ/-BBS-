@@ -30,9 +30,10 @@
 	if (pageNo > totalPages) {
 		pageNo = totalPages;
 	}
-Statement stmt =DB.createStmt(conn);
-int startPos = (pageNo-1)*PAGE_SIZE;
-	ResultSet rs = DB.executeQuery(stmt, "select * from article where pid = 0 order by pdate desc limit "+startPos+","+PAGE_SIZE);
+	Statement stmt = DB.createStmt(conn);
+	int startPos = (pageNo - 1) * PAGE_SIZE;
+	ResultSet rs = DB.executeQuery(stmt,
+			"select * from article where pid = 0 order by pdate desc limit " + startPos + "," + PAGE_SIZE);
 	while (rs.next()) {
 		Article a = new Article();
 		a.initFromRs(rs);
@@ -100,16 +101,12 @@ int startPos = (pageNo-1)*PAGE_SIZE;
 			<tbody>
 
 				<tr valign="top">
-					<td><span class="nobreak"> 页: 第<%=pageNo %>页，共<%=totalPages %>页
+					<td><span class="nobreak"> 页: 第<%=pageNo%>页，共<%=totalPages%>页
 							<span class="jive-paginator"> [ <a
-								href="articleFlat.jsp?pageNo=<%=pageNo-1%>">上一页</a> | <a
-								<% for(int i =1;i<=totalPages;i++){%>
-								href="articleFlat.jsp?pageNo=<%=i%>"
-								class=""><%=i%></a> <a
-								
-								<%} %>
-								href="articleFlat.jsp?pageNo=<%=pageNo+1%>">下一页</a>
-								]
+								href="articleFlat.jsp?pageNo=<%=pageNo - 1%>">上一页</a> | <a
+								<%for (int i = 1; i <= totalPages; i++) {%>
+								href="articleFlat.jsp?pageNo=<%=i%>" class=""><%=i%></a> <a
+								<%}%> href="articleFlat.jsp?pageNo=<%=pageNo + 1%>">下一页</a> ]
 						</span>
 					</span></td>
 				</tr>
@@ -135,8 +132,6 @@ int startPos = (pageNo-1)*PAGE_SIZE;
 									</thead>
 									<tbody>
 										<%
-										
-																						
 											int lineNo = 0;
 											for (Iterator<Article> iterator = articles.iterator(); iterator.hasNext();) {
 												Article a = iterator.next();
@@ -154,7 +149,20 @@ int startPos = (pageNo-1)*PAGE_SIZE;
 														height="16" width="16">
 													<!-- div-->
 												</div></td>
-											<td nowrap="nowrap" width="1%">&nbsp; &nbsp;</td>
+											<%
+												String url = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+															+ request.getContextPath() + request.getServletPath();
+													System.out.println(url);
+													System.out.println(request.getQueryString());
+													
+													url += request.getQueryString()==null ?"":"?"+request.getQueryString();
+
+													System.out.println(url);
+													System.out.println(request.getRequestURL());
+													System.out.println(request.getRequestURI());
+											%>
+											<td nowrap="nowrap" width="1%"><a
+												href="delete.jsp?isLeaf=<%=a.isLeaf()%>&id=<%=a.getId()%>&pid=<%=a.getPid()%>&from=<%=url%>">删除</a></td>
 											<td class="jive-thread-name" width="95%"><a
 												id="jive-thread-1"
 												href="articleDetailFlat.jsp?id=<%=a.getId()%>"><%=a.getTitle()%></a></td>

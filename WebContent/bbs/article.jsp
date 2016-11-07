@@ -156,7 +156,7 @@
 														height="16" width="16">
 													<!-- div-->
 												</div></td>
-											<td nowrap="nowrap" width="1%">&nbsp; &nbsp;</td>
+											<td nowrap="nowrap" width="1%"><a href="delete.jsp?isLeaf=<%= a.isLeaf() %>&id=<%=a.getId()%>&pid=<%=a.getPid()%>">删除</a></td>
 											<td class="jive-thread-name" width="95%"><a
 												id="jive-thread-1"
 												href="articleDetail.jsp?id=<%=a.getId() %>"><%=preStr + a.getTitle()%></a></td>
